@@ -1,4 +1,5 @@
+from .coefplot import coefplot
 from .contingencyplot import contingencyplot
-from .pairplot_quanti import pearsonplot, pairplot_quanti
-from .pairplot_quali import chi2plot, pairplot_quali
+from .pairplot_quanti import pairplot_quanti, pearson_coefficient
+from .pairplot_quali import pairplot_quali, contingence_coefficient
 from .parallelplot import parallelplot
