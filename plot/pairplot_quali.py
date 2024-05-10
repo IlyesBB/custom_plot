@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import matplotlib as mpl
+from math import sqrt
 import seaborn as sns
 from contingencyplot import contingencyplot
 from pingouin import chi2_independence
@@ -39,28 +40,29 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1):
 def chi2plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, bg_color: tuple[float, ...] = (0, 0, 0, 1),
              fg_color: tuple[float, ...] = (0, 0, 0, .1), cmap: str = 'RdBu_r', ax: plt.axis = None, **kwargs):
     """
-    Displays the p-value of a chi2 test of independence between x and y as a label in a rectangle.
+    Displays the contingency coefficient of a chi2 test of independence between x and y as a label in a rectangle.
 
-    If hue is None, the rectangle color will be linked to the p-value, with respect to cmap.
-    Else, the rectangle size will be linked to the p-value.
+    If hue is None, the rectangle color will be linked to the contingency coefficient, with respect to cmap.
+    Else, the rectangle size will be linked to the contingency coefficient.
 
     @param x: Abscissa categorical variable series
     @param y: Ordinate categorical variable series
     @param hue: Categorical variable name to distinguish points with
     @param bg_color: Background color around the p-value rectangle. (hue != None)
-    @param fg_color: Color of the p-value rectangle. (hue != None)
-    @param cmap: Color scale of to map p-value coefficients to rectangle colors. (hue = None)
+    @param fg_color: Color of the contingency coefficient rectangle. (hue != None)
+    @param cmap: Color scale of to map contingency coefficients to rectangle colors. (hue = None)
     @param ax: Matplotlib axis on with add the R2 plot
     """
     axis = plt.gca() if ax is None else ax
 
-    # Adding the p-value as a label
-    #######################################
+    # Adding the contingency coefficient as a label
+    ###############################################""
     data = pd.DataFrame({x.name: x, y.name: y})
     _, _, chi2 = chi2_independence(data, x.name, y.name)
     # noinspection SpellCheckingInspection
-    chi2 = chi2.loc[0, 'pval']
-    axis.annotate('%.3e' % chi2, xy=(0.5, 0.5), xycoords='axes fraction', ha='center', va='center')
+    chi2 = chi2.loc[0, 'chi2']
+    chi2 = sqrt(chi2/(chi2 + len(data)*len(data.columns)))
+    axis.annotate('%.3f' % chi2, xy=(0.5, 0.5), xycoords='axes fraction', ha='center', va='center')
     axis.axis('off')
 
     # Setting the rectangle around p-value
