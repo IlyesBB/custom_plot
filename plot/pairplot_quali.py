@@ -25,9 +25,9 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1):
     """
     categorical_vars = data.select_dtypes('category').columns
     categorical_vars = categorical_vars[categorical_vars != hue]
-    hue = data[hue] if hue is not None else hue
-    grid = sns.PairGrid(data, hue=hue.name, vars=categorical_vars)
-    grid.map_lower(contingencyplot, color=color, s=s, hue=hue)  # Scatter plots at the bottom
+
+    grid = sns.PairGrid(data, hue=hue, vars=categorical_vars)
+    grid.map_lower(contingencyplot, color=color, s=s, hue=(data[hue] if hue is not None else hue))
     if hue is None:
         grid.map_diag(sns.histplot, color=color)  # Histograms at the diagonal
     else:
