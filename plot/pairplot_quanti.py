@@ -6,7 +6,7 @@ from scipy.stats import pearsonr
 import pandas as pd
 
 
-def pairplot(data: pd.DataFrame, hue: str | None = None, color: tuple[float, ...] = (.7, .7, 0), s: int = 5):
+def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[float, ...] = (.7, .7, 0), s: int = 5):
     """
     Similar to pair plot seaborn function, but upper diagonal graphs are made with this module's pearson_plot.
 
@@ -75,5 +75,5 @@ def pearsonplot(x: pd.Series, y: pd.Series, hue: str | None = None, bg_color: tu
 
 if __name__ == '__main__':
     diamond = sns.load_dataset("diamonds").iloc[:5000]
-    g = pairplot(diamond, hue='clarity', color=(.5, .5, .5))
+    g = pairplot_quanti(diamond, hue='clarity', color=(.5, .5, .5))
     plt.show()
