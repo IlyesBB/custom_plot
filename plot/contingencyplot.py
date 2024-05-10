@@ -23,8 +23,8 @@ def x_noise_hue(x: pd.Series, y: pd.Series, hue: pd.Series, square_len: float) -
     row_sums = ptable.sum(axis=1)
     for col in ptable.columns:
         ptable[col] = square_len * ptable[col] / row_sums
-    ptable_max = ptable.cumsum(axis=1) - square_len/2
-    ptable_min = ptable_max.shift(periods=1, axis=1).fillna(-square_len/2)
+    ptable_max = ptable.cumsum(axis=1) - square_len / 2
+    ptable_min = ptable_max.shift(periods=1, axis=1).fillna(-square_len / 2)
     # From table to series (adding column as index)
     ptable_max, ptable_min = ptable_max.stack(), ptable_min.stack()
     ptable_max.name, ptable_min.name = 'max', 'min'
@@ -61,11 +61,18 @@ def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.a
     ##########################################
     # square_len: Length of the square to plot the intersection of 2 values
     square_len = 0.8
-    y_real = y_real + uniform(-square_len/2, square_len/2, size=len(y_real))
+    y_real = y_real + uniform(-square_len / 2, square_len / 2, size=len(y_real))
     if hue is None:
-        x_real = x_real + uniform(-square_len/2, square_len/2, size=len(x_real))
+        x_real = x_real + uniform(-square_len / 2, square_len / 2, size=len(x_real))
     else:
-        x_real = x_real + x_noise_hue(x, y, hue, square_len/2)
+        x_real = x_real + x_noise_hue(x, y, hue, square_len / 2)
+    ax = plt.gca() if ax is None else ax
+    ax.set_xticks(range(len(distinct_x)))
+    ax.set_yticks(range(len(distinct_y)))
+    ax.set_xticklabels(sorted([val for val in distinct_x], key=lambda label: x_to_int[label]))
+    ax.set_yticklabels(sorted([val for val in distinct_y], key=lambda label: y_to_int[label]))
+    ax.set_xlabel(x.name)
+    ax.set_ylabel(y.name)
     sns.scatterplot(x=x_real, y=y_real, ax=ax, hue=hue, **kwargs)
 
 
