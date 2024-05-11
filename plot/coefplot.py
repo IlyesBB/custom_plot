@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib.patches import Rectangle
 
 
-def coefplot(x: pd.Series, y: pd.Series, hue: str | None = None, bg_color: tuple[float, ...] = (0, 0, 0, 1),
+def coefplot(x: pd.Series, y: pd.Series, hue: pd.Series | None = None, bg_color: tuple[float, ...] = (0, 0, 0, 1),
              fg_color: tuple[float, ...] = (0, 0, 0, .1), cmap: str = 'RdBu_r', ax: plt.axis = None,
              coef_func: Callable[[pd.Series, pd.Series], float] = None, **kwargs):
     """
@@ -17,7 +17,7 @@ def coefplot(x: pd.Series, y: pd.Series, hue: str | None = None, bg_color: tuple
 
     @param x: Abscissa variable series
     @param y: Ordinate variable series
-    @param hue: Categorical variable name to distinguish points with
+    @param hue: Categorical variable to distinguish points with
     @param bg_color: Background color around the coefficient rectangle. (hue != None)
     @param fg_color: Color of the coefficient rectangle. (hue != None)
     @param cmap: Color scale of to map coefficients to rectangle colors. (hue = None)
