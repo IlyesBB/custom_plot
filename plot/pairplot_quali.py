@@ -6,7 +6,7 @@ import pandas as pd
 from plot import coefplot
 
 
-def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1):
+def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, density=False, palette='Greens'):
     """
     Similar to pair plot seaborn function, but for categorical variables.
 
@@ -21,21 +21,62 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1):
     @param hue: Categorical variable name to distinguish points with
     @param color: Used for markers if hue=None
     @param s: Marker size
+    @param density: Whether to display the points or their density
+    @param palette: color map
     """
     categorical_vars = data.select_dtypes('category').columns
     categorical_vars = categorical_vars[categorical_vars != hue]
 
-    grid = sns.PairGrid(data, hue=hue, vars=categorical_vars)
-    grid.map_lower(contingencyplot, color=color, s=s, hue=(data[hue] if hue is not None else hue))
-    if hue is None:
-        grid.map_diag(sns.histplot, color=color)  # Histograms at the diagonal
+    grid = sns.PairGrid(data, hue=hue, vars=categorical_vars, diag_sharey=False)
+    hue = hue if hue is None else data[hue]
+    if density:
+        # Plotting heatmaps
+        ###################
+        grid.map_lower(lower_plot, color=color, density=density, cmap=palette)
     else:
-        grid.map_diag(sns.histplot, color=color, element="poly")
-    grid.map_upper(coefplot, fg_color=color, coef_func=contingence_coefficient)
+        # Plotting contingency plots
+        #############################
+        grid.map_lower(lower_plot, color=color, s=s, hue=hue, density=density, palette=palette)
+    grid.map_diag(sns.histplot, color=color, hue=hue)
+    hue = hue if not density else None
+    grid.map_upper(coefplot, hue=hue, fg_color=color, coef_func=contingence_coefficient)
     return grid
 
 
-def contingence_coefficient(x: pd.Series, y: pd.Series):
+def lower_plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, density: bool = False, **kwargs):
+    """
+    Display either a heatmap or a contingency plot, dependent on 'density' kwarg
+    Any additional kwarg is passed to heatmap (hue not included) or contingencyplot
+
+    Made to be used in Seaborn PairGrid.map_lower method
+
+    Note: If hue not explicitly in signature, will be called for each value of hue when specified otherwise
+
+    @param x: Abscissa categorical series
+    @param y: Ordinate categorical series
+    @param hue: Categorical series to color points with
+    @param density: Whether to display a heatmap (True) or a contingency plot (False)
+    """
+    if density:
+        # Plotting heatmap
+        ###################
+        # cross_tab: Contingency table between x and y
+        cross_tab = pd.crosstab(y, x, margins=False)
+        # TODO: Make plot start at 0 instead of 0.5
+        return sns.heatmap(cross_tab, norm='log', cbar=False, **kwargs)
+    else:
+        # Plotting contingency plot
+        #############################
+        return contingencyplot(x=x, y=y, hue=hue, **kwargs)
+
+
+def contingence_coefficient(x: pd.Series, y: pd.Series) -> float:
+    """
+    Calculates the contingency coefficient between 2 categorical variables
+    @param x: Abscissa categorical series
+    @param y: Ordinate categorical series
+    @return: Contingency coefficient
+    """
     data = pd.concat([x, y], axis=1)
     # noinspection PyTypeChecker
     _, _, chi2 = chi2_independence(data, x.name, y.name)
@@ -45,6 +86,7 @@ def contingence_coefficient(x: pd.Series, y: pd.Series):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    diamond = sns.load_dataset("diamonds")
-    g = pairplot_quali(diamond, hue='clarity', color=(.5, .5, .5))
+
+    diamond = sns.load_dataset("diamonds").iloc[:1000]
+    g = pairplot_quali(diamond, hue=None, color='green', palette='Set1', density=False, s=5)
     plt.show()
