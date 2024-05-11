@@ -2,8 +2,12 @@ import seaborn as sns
 from scipy.stats import pearsonr
 import pandas as pd
 from plot import coefplot
+import matplotlib as mlp
+import matplotlib.pyplot as plt
 
-def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[float, ...] = (.7, .7, 0), s: int = 5):
+
+def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[float, ...] | str = (.7, .7, 0),
+                    s: int = 5, density=False, palette='Set1', cmap='Greens', bins: int = 20):
     """
     Similar to pair plot seaborn function, but upper diagonal graphs are made with this module's pearson_plot.
 
@@ -16,15 +20,32 @@ def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[flo
     @param hue: Categorical variable name to distinguish points with
     @param color: Used for markers if hue=None
     @param s: Marker size
+    @param density: Whether to display the points or their density
+    @param palette: color map for densities
+    @param cmap: Color map for bivariate histograms (2dbins)
     """
-    grig = sns.PairGrid(data, hue=hue)
-    grig.map_lower(sns.scatterplot, color=color, s=s)
-    if hue is None:
-        grig.map_diag(sns.histplot, hue=None, color=color)
+    grid = sns.PairGrid(data, hue=hue, diag_sharey=False)
+    hue = hue if hue is None else data[hue]
+    if not density:
+        # Scatter plot
+        ###############
+        grid.map_lower(lower_plot, color=color, s=s, density=density, palette=palette, hue=hue)
     else:
-        grig.map_diag(sns.kdeplot, fill=True)
-    grig.map_upper(coefplot, hue=hue, coef_func=pearson_coefficient)
-    return grig
+        # Histogram bivariate (2dbins)
+        #############################
+        grid.map_lower(lower_plot, color=color, density=density, palette=palette, hue=hue, cmap=cmap, bins=bins)
+    grid.map_diag(sns.histplot, hue=hue, palette=palette, color=color)
+    grid.map_upper(coefplot, hue=hue, coef_func=pearson_coefficient)
+    return grid
+
+
+def lower_plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, **kwargs):
+    density = kwargs.pop('density')
+    if density:
+        norm = mlp.colors.LogNorm()
+        return sns.histplot(x=x, y=y, vmin=None, vmax=None, norm=norm, hue=hue, **kwargs)
+    else:
+        return sns.scatterplot(x=x, y=y, hue=hue, **kwargs)
 
 
 def pearson_coefficient(x: pd.Series, y: pd.Series):
@@ -34,6 +55,8 @@ def pearson_coefficient(x: pd.Series, y: pd.Series):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+
     diamond = sns.load_dataset("diamonds").iloc[:1000]
-    g = pairplot_quanti(diamond, hue='clarity', color=(.5, .5, .5))
+    # hue = 'clarity'
+    g = pairplot_quanti(diamond, hue=None, color='green', palette='Set1', cmap='Greens', density=False, bins=20)
     plt.show()
