@@ -6,7 +6,8 @@ import pandas as pd
 from plot import coefplot
 
 
-def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, density=False, palette='Greens'):
+def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, density=False, palette='Set1',
+                   cmap='Greens'):
     """
     Similar to pair plot seaborn function, but for categorical variables.
 
@@ -22,7 +23,8 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, 
     @param color: Used for markers if hue=None
     @param s: Marker size
     @param density: Whether to display the points or their density
-    @param palette: color map
+    @param palette: color map for contingency plot and diagonal histograms
+    @param cmap: Color map for heatmap
     """
     categorical_vars = data.select_dtypes('category').columns
     categorical_vars = categorical_vars[categorical_vars != hue]
@@ -32,7 +34,7 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, 
     if density:
         # Plotting heatmaps
         ###################
-        grid.map_lower(lower_plot, color=color, density=density, cmap=palette)
+        grid.map_lower(lower_plot, color=color, density=density, cmap=cmap)
     else:
         # Plotting contingency plots
         #############################
@@ -60,7 +62,9 @@ def lower_plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, density: bool 
     if density:
         # Plotting heatmap
         ###################
-        # cross_tab: Contingency table between x and y
+        if 'hue_order' in kwargs.keys():
+            del kwargs['hue_order']
+        del kwargs['palette']
         cross_tab = pd.crosstab(y, x, margins=False)
         # TODO: Make plot start at 0 instead of 0.5
         return sns.heatmap(cross_tab, norm='log', cbar=False, **kwargs)
@@ -88,5 +92,5 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
     diamond = sns.load_dataset("diamonds").iloc[:1000]
-    g = pairplot_quali(diamond, hue=None, color='green', palette='Set1', density=False, s=5)
+    g = pairplot_quali(diamond, hue=None, color='green', palette='Set1', density=True, s=5)
     plt.show()
