@@ -41,6 +41,7 @@ def x_noise_hue(x: pd.Series, y: pd.Series, hue: pd.Series, square_len: float) -
     return data['rand'] * data['diff'] + data['min']
 
 
+# noinspection PyUnboundLocalVariable
 def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.axis = None, square_len=0.5, **kwargs):
     """
     Scatter plot between 2 categorical variables
@@ -56,7 +57,9 @@ def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.a
     # Mapping categorical variables to integers
     ###########################################
     # distinct_x, distinct_y: Distinct values for x and y
+    change = False
     if x.dtype.name != 'category':
+        change = True
         x, y = y, x
 
     distinct_x: pd.Index = x.cat.categories
@@ -75,13 +78,20 @@ def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.a
         y_to_int = {val: i for (i, val) in enumerate(distinct_y)}
         y_real = y.map(y_to_int).astype(int)
         y_real = y_real + uniform(-square_len / 2, square_len / 2, size=len(y_real))
-        ax.set_yticks(range(len(distinct_y)))
-        ax.set_yticklabels(sorted([val for val in distinct_y], key=lambda label: y_to_int[label]))
     else:
         y_real = y
-
-    ax.set_xticks(range(len(distinct_x)))
-    ax.set_xticklabels(sorted([val for val in distinct_x], key=lambda label: x_to_int[label]))
+    if change:
+        # y is numerical
+        distinct_y = distinct_x
+        y_to_int = x_to_int
+        x, y = y, x
+        x_real, y_real = y_real, x_real
+    if x.dtype.name == 'category':
+        ax.set_xticks(range(len(distinct_x)))
+        ax.set_xticklabels(sorted([val for val in distinct_x], key=lambda label: x_to_int[label]))
+    if y.dtype.name == 'category':
+        ax.set_yticks(range(len(distinct_y)))
+        ax.set_yticklabels(sorted([val for val in distinct_y], key=lambda label: y_to_int[label]))
     ax.set_xlabel(x.name)
     ax.set_ylabel(y.name)
     sns.scatterplot(x=x_real, y=y_real, ax=ax, hue=hue, **kwargs)
