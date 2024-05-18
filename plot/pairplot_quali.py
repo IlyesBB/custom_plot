@@ -61,12 +61,7 @@ def lower_plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, density: bool 
     if density:
         # Plotting heatmap
         ###################
-        if 'hue_order' in kwargs.keys():
-            del kwargs['hue_order']
-        del kwargs['palette']
-        cross_tab = pd.crosstab(y, x, margins=False)
-        # TODO: Make plot start at 0 instead of 0.5
-        return sns.heatmap(cross_tab, norm='log', cbar=False, **kwargs)
+        return sns.histplot(x=x, y=y, hue=hue, norm='log', vmin=None, vmax=None, **kwargs)
     else:
         # Plotting contingency plot
         #############################
