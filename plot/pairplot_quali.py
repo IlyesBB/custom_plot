@@ -27,9 +27,8 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, 
     @param cmap: Color map for heatmap
     """
     categorical_vars = data.select_dtypes('category').columns
-    categorical_vars = categorical_vars[categorical_vars != hue]
 
-    grid = sns.PairGrid(data, hue=hue, vars=categorical_vars, diag_sharey=False)
+    grid = sns.PairGrid(data, hue=hue, vars=categorical_vars, palette=palette, diag_sharey=False)
     hue = hue if hue is None else data[hue]
     if density:
         # Plotting heatmaps
@@ -38,8 +37,8 @@ def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, 
     else:
         # Plotting contingency plots
         #############################
-        grid.map_lower(lower_plot, color=color, s=s, hue=hue, density=density, palette=palette)
-    grid.map_diag(sns.histplot, color=color, hue=hue)
+        grid.map_lower(lower_plot, color=color, s=s, density=density)
+    grid.map_diag(sns.histplot, color=color, hue=hue, multiple='stack')
     hue = hue if not density else None
     grid.map_upper(coefplot, hue=hue, fg_color=color, coef_func=contingence_coefficient)
     return grid
@@ -92,5 +91,5 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
     diamond = sns.load_dataset("diamonds").iloc[:1000]
-    g = pairplot_quali(diamond, hue=None, color='green', palette='Set1', density=True, s=5)
+    g = pairplot_quali(diamond, hue='cut', color='green', palette='Set1', density=False, s=5)
     plt.show()
