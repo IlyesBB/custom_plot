@@ -23,6 +23,7 @@ def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[flo
     @param density: Whether to display the points or their density
     @param palette: color map for densities
     @param cmap: Color map for bivariate histograms (2dbins)
+    @param bins: Bins for bivariate histograms (2dbins)
     """
     grid = sns.PairGrid(data, hue=hue, diag_sharey=False)
     hue = hue if hue is None else data[hue]
@@ -34,7 +35,7 @@ def pairplot_quanti(data: pd.DataFrame, hue: str | None = None, color: tuple[flo
         # Histogram bivariate (2dbins)
         #############################
         grid.map_lower(lower_plot, color=color, density=density, palette=palette, hue=hue, cmap=cmap, bins=bins)
-    grid.map_diag(sns.histplot, hue=hue, palette=palette, color=color)
+    grid.map_diag(sns.histplot, hue=hue, palette=palette, color=color, multiple='stack')
     grid.map_upper(coefplot, hue=hue, coef_func=pearson_coefficient)
     return grid
 
