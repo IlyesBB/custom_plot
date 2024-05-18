@@ -18,4 +18,18 @@ plt.show()
 ```
 ![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_false.png?raw=true)
 
+## Histograms
+```Python
+from plot import pairplot
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+diamond = sns.load_dataset("diamonds")
+vars = ['clarity', 'color', 'price', 'carat', 'cut']
+pairplot(diamond, vars=vars, density=True, color='green', cmap='Greens')
+
+plt.show()
+```
+![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true.png?raw=true)
+
 
