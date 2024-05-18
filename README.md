@@ -49,4 +49,12 @@ plt.show()
 ```
 ![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true_hue.png?raw=true)
 
+# Association coefficients
+## Numeric - Numeric
+Using Pearson's correlation coefficient
 
+## Categorical - Categorical
+Using Pearson's contingency coefficient.
+
+## Categorical - Numeric
+One-way ANOVA eta-quared.
