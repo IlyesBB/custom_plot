@@ -17,7 +17,10 @@ def x_noise_hue(x: pd.Series, y: pd.Series, hue: pd.Series, square_len: float) -
     """
     # Creating min and max each x, y, and hue value
     ################################################
-    data = pd.concat([x, y, hue], axis=1)
+    if hue.name not in [x.name, y.name]:
+        data = pd.concat([x, y, hue], axis=1)
+    else:
+        data = pd.concat([x, y], axis=1)
     ptable = pd.pivot_table(data=data.reset_index(), values='index', index=(x.name, y.name), columns=hue.name,
                             aggfunc='count', observed=False)
     row_sums = ptable.sum(axis=1)
@@ -38,7 +41,7 @@ def x_noise_hue(x: pd.Series, y: pd.Series, hue: pd.Series, square_len: float) -
     return data['rand'] * data['diff'] + data['min']
 
 
-def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.axis = None, **kwargs):
+def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.axis = None, square_len=0.5, **kwargs):
     """
     Scatter plot between 2 categorical variables
 
@@ -48,29 +51,37 @@ def contingencyplot(x: pd.Series, y: pd.Series, hue: pd.Series = None, ax: plt.a
     @param y: Ordinate categorical variable series
     @param hue: Categorical variable name to distinguish points with
     @param ax: Matplotlib axis to witch add plot
+    @param square_len: Length of the square to plot the intersection of 2 values
     """
     # Mapping categorical variables to integers
     ###########################################
     # distinct_x, distinct_y: Distinct values for x and y
+    if x.dtype.name != 'category':
+        x, y = y, x
+
     distinct_x: pd.Index = x.cat.categories
-    distinct_y: pd.Index = y.cat.categories
-    x_to_int, y_to_int = {val: i for (i, val) in enumerate(distinct_x)}, {val: i for (i, val) in enumerate(distinct_y)}
-    x_real, y_real = x.map(x_to_int).astype(int), y.map(y_to_int).astype(int)
+    x_to_int = {val: i for (i, val) in enumerate(distinct_x)}
+    x_real = x.map(x_to_int).astype(int)
 
     # Adding noise to have a "crowd feeling"
     ##########################################
-    # square_len: Length of the square to plot the intersection of 2 values
-    square_len = 0.8
-    y_real = y_real + uniform(-square_len / 2, square_len / 2, size=len(y_real))
     if hue is None:
         x_real = x_real + uniform(-square_len / 2, square_len / 2, size=len(x_real))
     else:
         x_real = x_real + x_noise_hue(x, y, hue, square_len / 2)
     ax = plt.gca() if ax is None else ax
+    if y.dtype.name == 'category':
+        distinct_y: pd.Index = y.cat.categories
+        y_to_int = {val: i for (i, val) in enumerate(distinct_y)}
+        y_real = y.map(y_to_int).astype(int)
+        y_real = y_real + uniform(-square_len / 2, square_len / 2, size=len(y_real))
+        ax.set_yticks(range(len(distinct_y)))
+        ax.set_yticklabels(sorted([val for val in distinct_y], key=lambda label: y_to_int[label]))
+    else:
+        y_real = y
+
     ax.set_xticks(range(len(distinct_x)))
-    ax.set_yticks(range(len(distinct_y)))
     ax.set_xticklabels(sorted([val for val in distinct_x], key=lambda label: x_to_int[label]))
-    ax.set_yticklabels(sorted([val for val in distinct_y], key=lambda label: y_to_int[label]))
     ax.set_xlabel(x.name)
     ax.set_ylabel(y.name)
     sns.scatterplot(x=x_real, y=y_real, ax=ax, hue=hue, **kwargs)
