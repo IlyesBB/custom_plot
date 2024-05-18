@@ -13,6 +13,7 @@ import seaborn as sns
 diamond = sns.load_dataset("diamonds").sample(200)
 vars = ['clarity', 'color', 'price', 'carat', 'cut']
 pairplot(diamond, vars=vars, density=False, color='green', cmap='Greens')
+plt.suptitle('Diamond pairplot')
 
 plt.show()
 ```
@@ -27,9 +28,25 @@ import seaborn as sns
 diamond = sns.load_dataset("diamonds")
 vars = ['clarity', 'color', 'price', 'carat', 'cut']
 pairplot(diamond, vars=vars, density=True, color='green', cmap='Greens')
+plt.suptitle('Diamond pairplot')
 
 plt.show()
 ```
 ![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true.png?raw=true)
+
+## Histograms with hue
+```Python
+from plot import pairplot
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+diamond = sns.load_dataset("diamonds")
+vars = ['clarity', 'color', 'price', 'carat', 'cut']
+pairplot(diamond, vars=vars, density=True, palette='Set1', hue='cut', color='gray')
+plt.suptitle('Diamond pairplot')
+
+plt.show()
+```
+![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true_hue.png?raw=true)
 
 
