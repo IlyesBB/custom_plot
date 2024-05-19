@@ -1,5 +1,5 @@
-from plot import (contingencyplot, coefplot, pearson_coefficient, contingence_coefficient,
-                  lower_plot_quanti, lower_plot_quali)
+from multiplot import (contingencyplot, coefplot, pearson_coefficient, contingence_coefficient,
+                       lower_plot_quanti, lower_plot_quali)
 from pingouin import welch_anova
 import pandas as pd
 import seaborn as sns

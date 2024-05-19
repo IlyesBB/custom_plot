@@ -102,16 +102,3 @@ if __name__ == '__main__':
     plt.title('Cars caracteristics over time')
 
     plt.show()
-
-    """
-    diamond = sns.load_dataset("diamonds").iloc[:10]
-    print(diamond.head())
-    fig, ax_ = plt.subplots()
-
-    parallelplot(diamond, hue='depth', ax=ax_, bezier=True)
-    ax_.set_title('Diamonds parallelplot', fontsize=18)
-
-    plt.tight_layout()
-
-    plt.show()
-    """

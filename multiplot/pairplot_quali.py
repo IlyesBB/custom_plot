@@ -3,7 +3,7 @@ import seaborn as sns
 from contingencyplot import contingencyplot
 from pingouin import chi2_independence
 import pandas as pd
-from plot import coefplot
+from multiplot import coefplot
 
 
 def pairplot_quali(data: pd.DataFrame, hue: str = None, color=(.7, .7, 0), s=1, density=False, palette='Set1',
@@ -56,7 +56,7 @@ def lower_plot(x: pd.Series, y: pd.Series, hue: pd.Series = None, density: bool 
     @param x: Abscissa categorical series
     @param y: Ordinate categorical series
     @param hue: Categorical series to color points with
-    @param density: Whether to display a heatmap (True) or a contingency plot (False)
+    @param density: Whether to display a heatmap (True) or a contingency multiplot (False)
     """
     if density:
         # Plotting heatmap

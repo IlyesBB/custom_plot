@@ -1,7 +1,7 @@
 import seaborn as sns
 from scipy.stats import pearsonr
 import pandas as pd
-from plot import coefplot
+from multiplot import coefplot
 import matplotlib as mlp
 import matplotlib.pyplot as plt
 
