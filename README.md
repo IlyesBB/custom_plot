@@ -11,7 +11,7 @@ Also has a parallel coordinates plot function.
 
 ## Parallel coordinates plot
 ```Python
-from plot import parallelplot
+from multiplot import parallelplot
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -26,7 +26,7 @@ plt.show()
 
 ## Scatter plots
 ```Python
-from plot import pairplot
+from multiplot import pairplot
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -41,7 +41,7 @@ plt.show()
 
 ## Histograms
 ```Python
-from plot import pairplot
+from multiplot import pairplot
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -56,7 +56,7 @@ plt.show()
 
 ## Histograms with hue
 ```Python
-from plot import pairplot
+from multiplot import pairplot
 import matplotlib.pyplot as plt
 import seaborn as sns
 
