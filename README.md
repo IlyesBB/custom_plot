@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 mpg = sns.load_dataset('mpg')
-plt.title('Cars caracteristics over time')
 
 parallelplot(mpg, hue='model_year', bezier=True)
 plt.title('Cars caracteristics over time')
