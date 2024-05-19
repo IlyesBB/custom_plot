@@ -8,6 +8,23 @@ It extends the Seaborn pairplot function by:
 Also has a parallel coordinates plot function.
 
 # Examples
+
+## Parallel coordinates plot
+```Python
+from plot import parallelplot
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+mpg = sns.load_dataset('mpg')
+plt.title('Cars caracteristics over time')
+
+parallelplot(mpg, hue='model_year', bezier=True)
+plt.title('Cars caracteristics over time')
+
+plt.show()
+```
+![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/parallelplot.png?raw=true)
+
 ## Scatter plots
 ```Python
 from plot import pairplot
@@ -52,22 +69,6 @@ plt.suptitle('Diamond pairplot')
 plt.show()
 ```
 ![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true_hue.png?raw=true)
-
-## Parallel coordinates plot
-```Python
-from plot import parallelplot
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-mpg = sns.load_dataset('mpg')
-plt.title('Cars caracteristics over time')
-
-parallelplot(mpg, hue='model_year', bezier=True)
-plt.title('Cars caracteristics over time')
-
-plt.show()
-```
-![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/parallelplot.png?raw=true)
 
 
 # Association coefficients
