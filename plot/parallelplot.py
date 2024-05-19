@@ -88,15 +88,24 @@ def parallelplot(data: pd.DataFrame, hue: str, cmap: str = None, ax: plt.Axes = 
         ax.legend(plot_hue[0], plot_hue[1], loc='lower center', bbox_to_anchor=(0.5, -0.18),
                   ncol=len(plot_hue), fancybox=True, shadow=True)
     else:
-        plt.colorbar(mapper, ax=ax, location='right', anchor=(2.8, 1), label=hue.name)
+        plt.colorbar(mapper, ax=ax, location='right', label=hue.name)
 
 
 if __name__ == '__main__':
     import seaborn as sns
 
+    mpg = sns.load_dataset('mpg')
+    plt.title('Cars caracteristics over time')
+
+    parallelplot(mpg, hue='model_year', bezier=True)
+
+    plt.title('Cars caracteristics over time')
+
+    plt.show()
+
+    """
     diamond = sns.load_dataset("diamonds").iloc[:10]
     print(diamond.head())
-
     fig, ax_ = plt.subplots()
 
     parallelplot(diamond, hue='depth', ax=ax_, bezier=True)
@@ -105,3 +114,4 @@ if __name__ == '__main__':
     plt.tight_layout()
 
     plt.show()
+    """
