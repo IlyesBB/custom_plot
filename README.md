@@ -1,7 +1,11 @@
 # Purpose
-The aim of this repo is to propose an extension of Seaborn pairplot function, by:
+The aim of this repo is to propose visualization for multidimentional plots.
+
+It extends the Seaborn pairplot function by:
 - Allowing it to process categorical data
 - Mix it with heatmap for upper diagonal
+
+Also has a parallel coordinates plot function.
 
 # Examples
 ## Scatter plots
@@ -48,6 +52,23 @@ plt.suptitle('Diamond pairplot')
 plt.show()
 ```
 ![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/density_true_hue.png?raw=true)
+
+## Parallel coordinates plot
+```Python
+from plot import parallelplot
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+mpg = sns.load_dataset('mpg')
+plt.title('Cars caracteristics over time')
+
+parallelplot(mpg, hue='model_year', bezier=True)
+plt.title('Cars caracteristics over time')
+
+plt.show()
+```
+![alt text](https://github.com/IlyesBB/custom_plot/blob/master/screenshots/parallelplot.png?raw=true)
+
 
 # Association coefficients
 ## Numeric - Numeric
